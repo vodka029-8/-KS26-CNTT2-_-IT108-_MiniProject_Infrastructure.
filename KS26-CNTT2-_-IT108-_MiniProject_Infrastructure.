@@ -1,0 +1,72 @@
+
+Module 1: Thiết lập "Căn cứ số" (Terminal)
+
+Sử dụng 01 dòng lệnh duy nhất trên Terminal (Bash trên Linux/macOS hoặc PowerShell/CMD trên Windows) để khởi tạo cấu trúc thư mục dạng kebab-case và file cấu hình ẩn .env:
+• Trên Bash / Git Bash (Linux/macOS):bash
+mkdir -p greentech-system/{docs,scripts,data,backup} && touch greentech-system/docs/README.md greentech-system/docs/srs-he-thong.docx greentech-system/scripts/auto_report.sh greentech-system/data/log-he-thong.log greentech-system/data/quan-ly-thiet-bi.xlsx greentech-system/.env
+Hãy thận trọng khi sử dụng mã.
+• Trên PowerShell (Windows):powershell
+New-Item -ItemType Directory -Path "greentech-system\docs", "greentech-system\scripts", "greentech-system\data", "greentech-system\backup" -Force; "DB_PASS=GreenTech@2026" | Out-File -Encoding utf8 "greentech-system\.env"
+Hãy thận trọng khi sử dụng mã.
+(Dùng đường dẫn tương đối cd greentech-system để di chuyển vào trong và thao tác).
+
+Module 2: Robot lọc Log tự động
+
+Viết tệp auto_report.bat (cho Windows CMD) đặt trong thư mục scripts/:
+batch
+@echo off
+chcp 65001 > nul
+echo ================================================== >> ..\backup\bao-cao-su-co.txt
+echo [BAO CAO SU CO HE THONG] - Ngay: %DATE% %TIME% >> ..\backup\bao-cao-su-co.txt
+echo ================================================== >> ..\backup\bao-cao-su-co.txt
+
+:: Dùng findstr để lọc từ file log 500MB theo dòng (tránh tràn RAM)
+findstr /I "CRITICAL ERROR TIMEOUT" "..\data\log-he-thong.log" >> "..\backup\bao-cao-su-co.txt"
+
+echo Hoan tat trich xuat loi vao backup\bao-cao-su-co.txt
+pause
+Hãy thận trọng khi sử dụng mã.
+• Lưu ý bẫy Script: Tuyệt đối không dùng lệnh hủy diệt như del /f /s /q do AI tự sinh ra mà chưa qua Audit (thẩm định).
+
+Module 3: Tài liệu hướng dẫn vận hành (Markdown & Word)
+
+
+1. README.md (đặt tại docs/README.md)
+
+markdown
+# # GreenTech Infrastructure System (H1)
+
+## Hướng dẫn chạy Script tự động
+```bash
+cd scripts
+auto_report.bat
+```
+
+## Checklist kiểm tra thiết bị IoT
+- [x] Kiểm tra kết nối mạng 4G/5G trạm cảm biến
+- [ ] Đối soát mã linh kiện phần cứng
+- [ ] Sao lưu file log định kỳ
+
+## Bảng thông số phần cứng cơ bản
+
+| Mã trạm | Loại Chip | RAM | Bộ nhớ Storage |
+| :--- | :--- | :--- | :--- |
+| TRAM_01 | ARM Cortex | 4GB | 64GB SSD |
+| TRAM_02 | ARM Cortex | 8GB | 128GB SSD |
+Hãy thận trọng khi sử dụng mã.
+
+2. SRS Document (srs-he-thong.docx)
+
+• Trong Microsoft Word, bôi đen các đề mục chính và áp dụng kiểu Heading 1, Heading 2, Heading 3 từ thanh Styles.
+• Vào thẻ References -> Table of Contents (Mục lục tự động) để chèn Auto TOC ở trang đầu tiên.
+
+Module 4: Đối soát tài nguyên (Excel)
+
+Tại sheet trang-thai-tram trong file quan-ly-thiet-bi.xlsx:
+1. Làm sạch mã linh kiện bằng hàm TRIM (nếu mã bị dính khoảng trắng thừa gây lỗi #N/A):excel
+=TRIM(A2)
+Hãy thận trọng khi sử dụng mã.
+2. Dùng hàm VLOOKUP cố định vùng dữ liệu bằng dấu $ và tham số FALSE (0) để tra cứu ten_thiet_bi từ sheet danh-muc-linh-kien:excel
+=VLOOKUP(TRIM(B2), 'danh-muc-linh-kien'!$A$2:$D$100, 2, FALSE)
+Hãy thận trọng khi sử dụng mã.
+• Bẫy Excel: Đảm bảo sheet danh-muc-linh-kien không có dòng trống hay ô bị gộp (Merge Cell) ở vùng tra cứu để AutoFilter và VLOOKUP hoạt động chính xác.
